@@ -1,0 +1,38 @@
+{
+  "records": [
+    {
+      "date": "2026-06-01",
+      "outlet": "Reveira House",
+      "category": "RV-Food",
+      "meal": "Dinner",
+      "revenue": 5000,
+      "cover": 20,
+      "cost": 1500
+    },
+    {
+      "date": "2026-06-01",
+      "outlet": "Junsai",
+      "category": "RV-Beverage",
+      "meal": "Lunch",
+      "revenue": 3000,
+      "cover": 15,
+      "cost": 900
+    }
+  ],
+  "adjustments": [
+    {
+      "date": "2026-06-01",
+      "outlet": "Reveira House",
+      "purchase": 2000,
+      "issue": 500,
+      "transferIn": 0,
+      "transferOut": 0,
+      "crCost": 100,
+      "roomAvailable": 50,
+      "roomSold": 30,
+      "comHuRoom": 2,
+      "totalGuest": 60,
+      "weather": "Sunny"
+    }
+  ]
+}
