@@ -1,0 +1,2569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Revenue & Cost Management & Analytics</title>
+  <!-- Google Fonts: Cinzel & Prompt -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    :root {
+      --bg-cream: #fbf9f5;
+      --card-bg: rgba(255, 255, 255, 0.96);
+      --card-inner: #fdfbf7;
+      
+      --gold-primary: #b8860b;
+      --gold-accent: #cda851;
+      --gold-border: #e2cca0;
+      --brown-border: #ebdccb;
+      
+      --gold-gradient: linear-gradient(135deg, #dfc079 0%, #c5a059 50%, #ad853b 100%);
+      --gold-glow: rgba(184, 134, 11, 0.12);
+      
+      --text-main: #3d312a;
+      --text-muted: #7c6d63;
+      --text-gold: #966f1e;
+      
+      --accent-danger: #c53030;
+      --radius: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Prompt', sans-serif;
+    }
+
+    body { 
+      background-color: var(--bg-cream);
+      background-image: 
+        radial-gradient(circle at 15% 20%, rgba(205, 168, 81, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 85% 80%, rgba(184, 134, 11, 0.06) 0%, transparent 45%);
+      color: var(--text-main);
+      padding: 16px 12px;
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+      position: relative;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1480px;
+      background: var(--card-bg);
+      backdrop-filter: blur(8px);
+      border-radius: 14px;
+      box-shadow: 0 10px 40px rgba(120, 90, 60, 0.14);
+      border: 1px solid var(--brown-border);
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+      display: flex;
+      align-items: stretch;
+      min-height: 640px;
+    }
+
+    /* ===== Luxury Sidebar ===== */
+    .sidebar {
+      flex: 0 0 232px;
+      width: 232px;
+      position: relative;
+      background:
+        radial-gradient(circle at 20% 0%, rgba(223, 192, 121, 0.25) 0%, transparent 55%),
+        linear-gradient(180deg, #2a2118 0%, #201a14 55%, #1a1510 100%);
+      padding: 22px 14px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      overflow: hidden;
+      z-index: 2;
+    }
+
+    .sidebar::before {
+      content: '';
+      position: absolute;
+      top: 0; right: 0; bottom: 0;
+      width: 3px;
+      background: var(--gold-gradient);
+      box-shadow: 0 0 14px rgba(205, 168, 81, 0.55);
+    }
+
+    .sidebar::after {
+      content: '';
+      position: absolute;
+      top: -60%;
+      left: -30%;
+      width: 220%;
+      height: 220%;
+      background: repeating-linear-gradient(
+        115deg,
+        transparent 0px,
+        transparent 60px,
+        rgba(205, 168, 81, 0.035) 60px,
+        rgba(205, 168, 81, 0.035) 61px
+      );
+      pointer-events: none;
+    }
+
+    .sidebar-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 4px 6px 18px;
+      margin-bottom: 12px;
+      border-bottom: 1px solid rgba(205, 168, 81, 0.25);
+      position: relative;
+      z-index: 1;
+    }
+
+    .brand-mark {
+      flex: 0 0 auto;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Cinzel', serif;
+      font-weight: 700;
+      font-size: 15px;
+      color: #2a2118;
+      background: var(--gold-gradient);
+      box-shadow: 0 0 12px rgba(205, 168, 81, 0.55);
+    }
+
+    .brand-text { display: flex; flex-direction: column; line-height: 1.3; }
+
+    .brand-name {
+      font-family: 'Cinzel', serif;
+      font-weight: 700;
+      font-size: 15px;
+      letter-spacing: 2.5px;
+      color: var(--gold-accent);
+    }
+
+    .brand-sub {
+      font-size: 10px;
+      color: rgba(251, 249, 245, 0.45);
+      letter-spacing: 0.5px;
+    }
+
+    .nav-tabs {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .tab-btn {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      width: 100%;
+      padding: 11px 14px;
+      font-size: 13px;
+      font-weight: 500;
+      font-family: 'Prompt', sans-serif;
+      text-align: left;
+      border: 1px solid transparent;
+      border-radius: 9px;
+      background: transparent;
+      color: rgba(251, 249, 245, 0.62);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      isolation: isolate;
+      transition: color 0.25s ease, transform 0.25s ease, border-color 0.25s ease;
+    }
+
+    .tab-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(205, 168, 81, 0.16), transparent 70%);
+      transform: translateX(-100%);
+      transition: transform 0.35s ease;
+      z-index: -1;
+    }
+
+    .tab-btn:hover {
+      color: var(--gold-accent);
+      transform: translateX(3px);
+      border-color: rgba(205, 168, 81, 0.25);
+    }
+
+    .tab-btn:hover::before { transform: translateX(0); }
+
+    .tab-icon {
+      font-size: 15px;
+      filter: grayscale(0.15);
+      transition: transform 0.3s ease;
+    }
+
+    .tab-btn:hover .tab-icon { transform: scale(1.12) rotate(-4deg); }
+
+    .tab-btn.active {
+      color: #2a2118;
+      font-weight: 600;
+      background: var(--gold-gradient);
+      border-color: transparent;
+      box-shadow: 0 4px 16px rgba(184, 134, 11, 0.45), inset 0 1px 0 rgba(255,255,255,0.35);
+      animation: sidebarGlow 2.6s ease-in-out infinite;
+    }
+
+    .tab-btn.active::before { display: none; }
+    .tab-btn.active:hover { transform: translateX(0); }
+
+    @keyframes sidebarGlow {
+      0%, 100% { box-shadow: 0 4px 16px rgba(184, 134, 11, 0.35), inset 0 1px 0 rgba(255,255,255,0.35); }
+      50% { box-shadow: 0 4px 22px rgba(184, 134, 11, 0.6), inset 0 1px 0 rgba(255,255,255,0.35); }
+    }
+
+    .sidebar-foot {
+      margin-top: auto;
+      padding-top: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .foot-line {
+      width: 34px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold-accent), transparent);
+    }
+
+    .foot-text {
+      font-family: 'Cinzel', serif;
+      font-size: 9px;
+      letter-spacing: 2.5px;
+      color: rgba(205, 168, 81, 0.55);
+      text-transform: uppercase;
+    }
+
+    .logout-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      width: 100%;
+      padding: 8px 10px;
+      margin-top: 4px;
+      font-size: 11.5px;
+      font-weight: 500;
+      font-family: 'Prompt', sans-serif;
+      color: rgba(251, 249, 245, 0.55);
+      background: transparent;
+      border: 1px solid rgba(251, 249, 245, 0.18);
+      border-radius: 7px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .logout-btn:hover {
+      color: #f0d9a0;
+      border-color: rgba(205, 168, 81, 0.5);
+      background: rgba(205, 168, 81, 0.1);
+    }
+
+    /* ===== Main Panel ===== */
+    .main-panel {
+      flex: 1 1 auto;
+      min-width: 0;
+      padding: 18px 20px;
+      position: relative;
+      overflow: hidden auto;
+      z-index: 1;
+    }
+
+    .main-panel::before {
+      content: 'Navera';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(-18deg);
+      font-family: 'Cinzel', serif;
+      font-size: 160px;
+      font-weight: 700;
+      color: rgba(184, 134, 11, 0.035);
+      letter-spacing: 16px;
+      pointer-events: none;
+      user-select: none;
+      z-index: 0;
+      white-space: nowrap;
+    }
+
+    .main-panel > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; animation: tabFadeIn 0.35s ease; }
+
+    @keyframes tabFadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 860px) {
+      .container { flex-direction: column; min-height: 0; }
+      .sidebar {
+        flex: 0 0 auto;
+        width: 100%;
+        flex-direction: row;
+        align-items: center;
+        padding: 12px 14px;
+        gap: 10px;
+      }
+      .sidebar::before { top: auto; bottom: 0; left: 0; right: 0; width: 100%; height: 3px; }
+      .sidebar-brand { border-bottom: none; padding: 0; margin: 0; margin-right: 6px; }
+      .brand-text { display: none; }
+      .nav-tabs { flex-direction: row; flex: 1; overflow-x: auto; }
+      .tab-btn { white-space: nowrap; }
+      .sidebar-foot { display: none; }
+    }
+
+    .header-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--brown-border);
+      margin-bottom: 12px;
+    }
+
+    .header-container h2 { 
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--gold-primary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .action-group {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 10px;
+      border-radius: 5px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      border: 1px solid var(--gold-border);
+      background-color: #ffffff;
+      color: var(--text-main);
+      transition: all 0.2s;
+    }
+
+    .btn:hover {
+      border-color: var(--gold-primary);
+      color: var(--gold-primary);
+      box-shadow: 0 2px 8px var(--gold-glow);
+    }
+
+    .btn-open { border-color: #cbd5e1; color: #0284c7; background: #f0f9ff; }
+    .btn-delete { border-color: #fecaca; color: var(--accent-danger); background: #fff5f5; }
+    .btn-random { border-color: #e9d5ff; color: #7e22ce; background: #faf5ff; }
+
+    .btn-save { 
+      width: 100%;
+      padding: 10px 16px; 
+      background: var(--gold-gradient);
+      color: #ffffff; 
+      margin-top: 14px; 
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: var(--radius);
+      justify-content: center;
+      cursor: pointer;
+      border: none;
+      box-shadow: 0 2px 8px rgba(184, 134, 11, 0.2);
+      transition: all 0.2s;
+    }
+    .btn-save:hover { opacity: 0.95; transform: translateY(-1px); }
+
+    .top-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px 10px;
+      margin-bottom: 10px;
+    }
+
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .field-group label {
+      font-size: 11.5px;
+      font-weight: 500;
+      color: var(--text-gold);
+      white-space: nowrap;
+    }
+
+    .input-control {
+      height: 30px;
+      padding: 2px 8px;
+      border: 1px solid var(--brown-border);
+      border-radius: 4px;
+      font-size: 12.5px;
+      outline: none;
+      background: #ffffff;
+      color: var(--text-main);
+      transition: all 0.2s;
+    }
+
+    .input-control:focus {
+      border-color: var(--gold-accent);
+      box-shadow: 0 0 0 1.5px var(--gold-glow);
+    }
+
+    .category-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+      padding: 4px 8px;
+      background: var(--card-inner);
+      border-radius: 4px;
+      border: 1px dashed var(--gold-border);
+    }
+
+    .category-row span.cat-label {
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-gold);
+      margin-right: 4px;
+    }
+
+    .checkbox-group {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .checkbox-group label {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11.5px;
+      background: #ffffff;
+      border: 1px solid var(--brown-border);
+      padding: 2px 8px;
+      border-radius: 12px;
+      cursor: pointer;
+      color: var(--text-muted);
+    }
+
+    .checkbox-group input[type="checkbox"] { accent-color: var(--gold-primary); }
+
+    .table-section {
+      border: 1px solid var(--brown-border);
+      border-radius: 6px;
+      overflow-x: auto;
+      background: #ffffff;
+    }
+
+    .table-row {
+      display: grid;
+      grid-template-columns: 140px 1.2fr 0.8fr 1.2fr;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 8px;
+      border-bottom: 1px solid #f8f4ec;
+      min-width: 500px;
+    }
+
+    .row-food { background-color: rgba(72, 187, 120, 0.02); }
+    .row-bev  { background-color: rgba(56, 189, 248, 0.02); }
+    .row-wine { background-color: rgba(192, 132, 252, 0.02); }
+    .row-other{ background-color: rgba(255, 255, 255, 0.5); }
+
+    .meal-group { border-bottom: 1.5px solid var(--gold-border); }
+    .meal-group:last-child { border-bottom: none; }
+
+    .table-row.header {
+      background-color: #f7f0e6;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-gold);
+      padding: 5px 8px;
+      border-bottom: 1px solid var(--brown-border);
+    }
+
+    .table-row .meal-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-main);
+      white-space: nowrap;
+    }
+
+    .table-row input {
+      height: 27px;
+      padding: 2px 6px;
+      border: 1px solid var(--brown-border);
+      border-radius: 4px;
+      font-size: 12px;
+      outline: none;
+      width: 100%;
+      background-color: #ffffff;
+      color: var(--text-main);
+    }
+
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 16px;
+      padding: 10px 14px;
+      background: var(--card-inner);
+      border-radius: var(--radius);
+      border: 1px solid var(--brown-border);
+      margin-bottom: 14px;
+    }
+
+    .date-filter-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .date-filter-group label {
+      font-size: 11.5px;
+      font-weight: 500;
+      color: var(--text-gold);
+      white-space: nowrap;
+    }
+
+    .filter-date-input {
+      height: 30px;
+      width: 130px;
+      padding: 2px 6px;
+      border: 1px solid var(--brown-border);
+      border-radius: 4px;
+      font-size: 11.5px;
+      outline: none;
+      background: #ffffff;
+      color: var(--text-main);
+    }
+
+    .outlet-filter-group {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      flex-wrap: wrap;
+      flex: 1;
+    }
+
+    .outlet-filter-group label {
+      font-size: 11.5px;
+      font-weight: 500;
+      color: var(--text-gold);
+      margin-right: 4px;
+    }
+
+    .outlet-pill {
+      padding: 3px 9px;
+      font-size: 11px;
+      font-weight: 500;
+      border: 1px solid var(--gold-border);
+      background-color: #ffffff;
+      color: var(--text-muted);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .outlet-pill:hover {
+      border-color: var(--gold-primary);
+      color: var(--gold-primary);
+    }
+
+    .outlet-pill.active {
+      background: var(--gold-gradient);
+      color: #ffffff;
+      border-color: transparent;
+      box-shadow: 0 2px 6px rgba(184, 134, 11, 0.2);
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .kpi-grid-room {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .kpi-card {
+      background: #ffffff;
+      border: 1px solid var(--brown-border);
+      border-radius: var(--radius);
+      padding: 8px 10px;
+      position: relative;
+      box-shadow: 0 2px 6px rgba(120, 90, 60, 0.04);
+    }
+
+    .kpi-card::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 3px;
+      background: var(--gold-accent);
+    }
+
+    .kpi-blue::before { background: #0284c7; }
+    .kpi-purple::before { background: #9333ea; }
+    .kpi-red::before { background: var(--accent-danger); }
+    .kpi-teal::before { background: #0d9488; }
+    .kpi-indigo::before { background: #4f46e5; }
+    .kpi-orange::before { background: #d97706; }
+    .kpi-green::before { background: var(--gold-primary); }
+
+    .kpi-title { font-size: 10.5px; color: var(--text-muted); margin-bottom: 2px; white-space: nowrap; }
+    .kpi-value { font-size: 13.5px; font-weight: 700; color: var(--gold-primary); white-space: nowrap; }
+
+    .charts-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .chart-card {
+      background: #ffffff;
+      border: 1px solid var(--brown-border);
+      border-radius: var(--radius);
+      padding: 12px;
+      box-shadow: 0 2px 6px rgba(120, 90, 60, 0.04);
+    }
+
+    .chart-card h3 {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--text-gold);
+      margin-bottom: 8px;
+    }
+
+    .chart-full { grid-column: span 2; }
+
+    .dashboard-table-card {
+      background: #ffffff;
+      border: 1px solid var(--brown-border);
+      border-radius: var(--radius);
+      padding: 12px;
+      margin-top: 12px;
+      box-shadow: 0 2px 6px rgba(120, 90, 60, 0.04);
+    }
+
+    .dashboard-table-card h3 {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-gold);
+      margin-bottom: 8px;
+    }
+
+    .dash-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 10.5px;
+      text-align: right;
+      min-width: 1100px;
+    }
+
+    .dash-table th, .dash-table td {
+      padding: 4px 4px;
+      border-bottom: 1px solid #f6eee3;
+      white-space: nowrap;
+    }
+
+    .dash-table th {
+      background-color: #f7f0e6;
+      color: var(--text-gold);
+      font-weight: 600;
+    }
+
+    .dash-table th:first-child, .dash-table td:first-child {
+      text-align: left;
+      font-weight: 600;
+    }
+
+    .dash-table tr:hover td {
+      background-color: rgba(205, 168, 81, 0.04);
+    }
+
+    .dash-table tr.total-row {
+      background-color: #fdfbf7;
+      font-weight: 700;
+      border-top: 2px solid var(--gold-border);
+      color: var(--gold-primary);
+    }
+
+    @media (max-width: 1024px) {
+      .kpi-grid { grid-template-columns: repeat(4, 1fr); }
+      .kpi-grid-room { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    @media (max-width: 850px) {
+      .top-grid { grid-template-columns: 1fr 1fr; }
+      .charts-grid { grid-template-columns: 1fr; }
+      .chart-full { grid-column: span 1; }
+    }
+
+    /* ===== Login Overlay ===== */
+    .login-overlay {
+      position: fixed;
+      inset: 0;
+      background-color: var(--bg-cream);
+      background-image:
+        radial-gradient(circle at 15% 20%, rgba(205, 168, 81, 0.10) 0%, transparent 40%),
+        radial-gradient(circle at 85% 80%, rgba(184, 134, 11, 0.08) 0%, transparent 45%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+      padding: 16px;
+    }
+
+    .login-card {
+      width: 100%;
+      max-width: 340px;
+      background: var(--card-bg);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--brown-border);
+      border-radius: 14px;
+      box-shadow: 0 10px 40px rgba(120, 90, 60, 0.18);
+      padding: 32px 28px 26px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .login-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: var(--gold-gradient);
+      box-shadow: 0 0 14px rgba(205, 168, 81, 0.55);
+    }
+
+    .login-mark {
+      width: 52px;
+      height: 52px;
+      margin: 0 auto 14px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Cinzel', serif;
+      font-weight: 700;
+      font-size: 22px;
+      color: #2a2118;
+      background: var(--gold-gradient);
+      box-shadow: 0 0 16px rgba(205, 168, 81, 0.5);
+    }
+
+    .login-title {
+      font-family: 'Cinzel', serif;
+      font-weight: 700;
+      font-size: 17px;
+      letter-spacing: 2.5px;
+      color: var(--gold-primary);
+      margin-bottom: 4px;
+    }
+
+    .login-sub {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 22px;
+      letter-spacing: 0.3px;
+    }
+
+    .login-field {
+      position: relative;
+      margin-bottom: 14px;
+    }
+
+    .login-input {
+      width: 100%;
+      height: 42px;
+      padding: 2px 14px;
+      border: 1px solid var(--brown-border);
+      border-radius: 8px;
+      font-size: 14px;
+      letter-spacing: 3px;
+      text-align: center;
+      outline: none;
+      background: #ffffff;
+      color: var(--text-main);
+      transition: all 0.2s;
+    }
+
+    .login-input:focus {
+      border-color: var(--gold-primary);
+      box-shadow: 0 0 0 3px var(--gold-glow);
+    }
+
+    .login-card.shake { animation: loginShake 0.4s ease; }
+
+    @keyframes loginShake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-8px); }
+      40% { transform: translateX(8px); }
+      60% { transform: translateX(-6px); }
+      80% { transform: translateX(6px); }
+    }
+
+    .login-error {
+      font-size: 11.5px;
+      color: var(--accent-danger);
+      min-height: 16px;
+      margin-bottom: 10px;
+    }
+
+    .login-btn {
+      width: 100%;
+      padding: 11px 16px;
+      background: var(--gold-gradient);
+      color: #ffffff;
+      font-size: 13.5px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(184, 134, 11, 0.25);
+      transition: all 0.2s;
+    }
+
+    .login-btn:hover { opacity: 0.95; transform: translateY(-1px); }
+
+    .app-hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+  <div class="login-overlay" id="loginOverlay">
+    <div class="login-card" id="loginCard">
+      <div class="login-mark">N</div>
+      <div class="login-title">NAVERA</div>
+      <div class="login-sub">PASSWORD : 1234</div>
+      <div class="login-field">
+        <input type="password" id="loginPassword" class="login-input" placeholder="• • • • • • • •" autocomplete="off">
+      </div>
+      <div class="login-error" id="loginError"></div>
+      <button type="button" class="login-btn" onclick="attemptLogin()">เข้าสู่ระบบ</button>
+    </div>
+  </div>
+
+  <div class="container app-hidden" id="appContainer">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <span class="brand-mark">N</span>
+        <div class="brand-text">
+          <span class="brand-name">NAVERA Phuket - Mgallery Collection .</span>
+          <span class="brand-sub">Revenue & Cost Suite</span>
+        </div>
+      </div>
+
+      <nav class="nav-tabs">
+        <button type="button" class="tab-btn active" onclick="switchTab('entry')" id="dataEntryTabBtn">
+          <span class="tab-icon">📝</span>
+          <span class="tab-label">Data Entry</span>
+        </button>
+        <button type="button" class="tab-btn" onclick="switchTab('dashboard')">
+          <span class="tab-icon">📊</span>
+          <span class="tab-label">Analytics Dashboard</span>
+        </button>
+        <button type="button" class="tab-btn" onclick="switchTab('shift')">
+          <span class="tab-icon">🕒</span>
+          <span class="tab-label">Shift Analytics</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-foot">
+        <button type="button" class="logout-btn" onclick="logout()">
+          <span>🔒</span><span>ออกจากระบบ</span>
+        </button>
+        <span class="foot-line"></span>
+        <span class="foot-text">Est. Excellence</span>
+      </div>
+    </aside>
+
+    <div class="main-panel">
+    <!-- TAB 1: DATA ENTRY FORM -->
+    <div id="tab-entry" class="tab-content active">
+      <div class="header-container">
+        <h2>✨ Revenue, Cost & Daily Statistics Entry</h2>
+        <div class="action-group">
+          <button type="button" class="btn btn-random" onclick="seedRandomData()" title="Random 30 Days Data">🎲 Random 30 Days</button>
+          <button type="button" class="btn btn-delete" onclick="deleteRecords()">🗑️ Delete</button>
+          <button type="button" class="btn btn-open" onclick="openExcelFile()">📈 Open Excel</button>
+          <button type="button" class="btn btn-rebuild" onclick="rebuildExcelFile()">🔄 Rebuild</button>
+        </div>
+      </div>
+
+      <form id="revenueForm">
+        <!-- Top Section Grid -->
+        <div class="top-grid">
+          <div class="field-group">
+            <label for="revDate">📅 Date</label>
+            <input type="date" id="revDate" class="input-control nav-input" required>
+          </div>
+
+          <div class="field-group">
+            <label for="outlet">🍽️ Outlet</label>
+            <select id="outlet" class="input-control nav-input" required>
+              <option value="" disabled selected>-- Select Outlet --</option>
+              <option value="Reveira House">Reveira House</option>
+              <option value="Junsai">Junsai</option>
+              <option value="Tapanyaki">Tapanyaki</option>
+              <option value="Terrace">Terrace</option>
+              <option value="Juniper">Juniper</option>
+              <option value="Marcele">Marcele</option>
+              <option value="Canteen">Canteen</option>
+            </select>
+          </div>
+
+          <div class="field-group">
+            <label for="outletPurchase">📦 Direct Purchase (THB)</label>
+            <input type="number" id="outletPurchase" class="input-control nav-input" placeholder="0.00" step="any">
+          </div>
+
+          <div class="field-group">
+            <label for="outletIssue">📑 Store Issue (THB)</label>
+            <input type="number" id="outletIssue" class="input-control nav-input" placeholder="0.00" step="any">
+          </div>
+
+          <div class="field-group">
+            <label for="outletTransferIn">📥 Transfer In (THB)</label>
+            <input type="number" id="outletTransferIn" class="input-control nav-input" placeholder="0.00" step="any">
+          </div>
+
+          <div class="field-group">
+            <label for="outletTransferOut">📤 Transfer Out (THB)</label>
+            <input type="number" id="outletTransferOut" class="input-control nav-input" placeholder="0.00" step="any">
+          </div>
+
+          <div class="field-group">
+            <label for="outletCrCost">💳 Cr Cost / OC (THB)</label>
+            <input type="number" id="outletCrCost" class="input-control nav-input" placeholder="0.00" step="any">
+          </div>
+
+          <div class="field-group">
+            <label for="weather">☀️ Weather</label>
+            <select id="weather" class="input-control nav-input">
+              <option value="Sunny">☀️ Sunny</option>
+              <option value="Cloudy">⛅ Cloudy</option>
+              <option value="Rainy">🌧️ Rainy</option>
+              <option value="Stormy">⛈️ Stormy</option>
+            </select>
+          </div>
+
+          <!-- Room Stats -->
+          <div class="field-group">
+            <label for="roomAvailable">🛏️ Room Available</label>
+            <input type="number" id="roomAvailable" class="input-control nav-input" placeholder="0" min="0">
+          </div>
+
+          <div class="field-group">
+            <label for="roomSold">🔑 Room Sold</label>
+            <input type="number" id="roomSold" class="input-control nav-input" placeholder="0" min="0">
+          </div>
+
+          <div class="field-group">
+            <label for="comHuRoom">🏨 Com./HU. Room</label>
+            <input type="number" id="comHuRoom" class="input-control nav-input" placeholder="0" min="0">
+          </div>
+
+          <div class="field-group">
+            <label for="totalGuest">👥 Total Guests</label>
+            <input type="number" id="totalGuest" class="input-control nav-input" placeholder="0" min="0">
+          </div>
+        </div>
+
+        <!-- Canteen Form Section -->
+        <div id="canteenFormSection" style="display: none; background: #fdfbf7; border: 1px solid var(--gold-border); border-radius: var(--radius); padding: 14px; margin-bottom: 12px;">
+          <h3 style="font-size: 13px; font-weight: 600; color: var(--text-gold); margin-bottom: 10px;">🍲 Staff Canteen Entry (Budget ฿60 / Person)</h3>
+          
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; align-items: center;">
+            <div class="field-group">
+              <label for="canteenCover">👥 Total Headcount (Cover)</label>
+              <input type="number" id="canteenCover" class="input-control nav-input" placeholder="0" min="0" oninput="calculateCanteenBudget()">
+            </div>
+            
+            <div class="field-group">
+              <label for="canteenTotalCost">💰 Total Cost (THB)</label>
+              <input type="number" id="canteenTotalCost" class="input-control nav-input" placeholder="0.00" step="any" oninput="calculateCanteenBudget()">
+            </div>
+
+            <div class="field-group">
+              <label>📊 Target Budget (฿60 / Person)</label>
+              <div id="canteenBudgetDisplay" style="height: 30px; display: flex; align-items: center; font-weight: 700; color: var(--gold-primary); font-size: 14px;">฿0.00</div>
+            </div>
+
+            <div class="field-group">
+              <label>⚖️ Variance (Actual vs Budget)</label>
+              <div id="canteenDiffDisplay" style="height: 30px; display: flex; align-items: center; font-weight: 700; font-size: 14px;">฿0.00</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Category Checkbox -->
+        <div class="category-row">
+          <span class="cat-label">Category:</span>
+          <div class="checkbox-group">
+            <label><input type="checkbox" name="category" value="RV-Food"> <span>RV-Food</span></label>
+            <label><input type="checkbox" name="category" value="RV-Beverage"> <span>RV-Beverage</span></label>
+            <label><input type="checkbox" name="category" value="RV-Wine"> <span>RV-Wine</span></label>
+            <label><input type="checkbox" name="category" value="RV-Other"> <span>RV-Other</span></label>
+          </div>
+        </div>
+
+        <!-- Meal Entry Table -->
+        <div class="table-section">
+          <div class="table-row header">
+            <div>Meal / Type</div>
+            <div>Revenue (THB)</div>
+            <div>Cover (Cover)</div>
+            <div>Cost (THB)</div>
+          </div>
+
+          <!-- ABF Group -->
+          <div class="meal-group" data-meal="ABF">
+            <div class="table-row row-food" data-type="Food">
+              <div class="meal-label">ABF - Food</div>
+              <input type="number" class="nav-input inp-rev" placeholder="0.00" step="any">
+              <input type="number" class="nav-input inp-cover" placeholder="0">
+              <input type="number" class="nav-input inp-cost" placeholder="0.00" step="any">
+            </div>
+            <div class="table-row row-bev" data-type="Beverage">
+              <div class="meal-label">ABF - Bev</div>
+              <input type="number" class="nav-input inp-rev" placeholder="0.00" step="any">
+              <input type="number" class="nav-input inp-cover" placeholder="0">
+              <input type="number" class="nav-input inp-cost" placeholder="0.00" step="any">
+            </div>
+            <div class="table-row row-wine" data-type="Wine">
+              <div class="meal-label">ABF - Wine</div>
+              <input type="number" class="nav-input inp-rev" placeholder="0.00" step="any">
+              <input type="number" class="nav-input inp-cover" placeholder="0">
+              <input type="number" class="nav-input inp-cost" placeholder="0.00" step="any">
+            </div>
+            <div class="table-row row-other" data-type="Other">
+              <div class="meal-label">ABF - Other</div>
+              <input type="number" class="nav-input inp-rev" placeholder="0.00" step="any">
+              <input type="number" class="nav-input inp-cover" placeholder="0">
+              <input type="number" class="nav-input inp-cost" placeholder="0.00" step="any">
+            </div>
+          </div>
+
+          <!-- Breakfast Group -->
+          <div class="meal-group" data-meal="Breakfast">
+            <div class="table-row row-food" data-type="Food">
+              <div class="meal-label">Breakfast - Food</div>
+              <input type="number" class="nav-input inp-rev" placeholder="0.00" step="any">
+              <input type="number" class="nav-input inp-cover" placeholder="0">
+              <input type="number" class="nav-input inp-cost" placeholder="0.00" step="any">
+            </div>
+            <div class="table-row row-bev" data-type="Beverage">
+              <div class="meal-label">Breakfast - Bev</div>
+              <input type="number" class="nav-input inp-rev" placeholder="0.00" step="any">
+              <input type="number" class="nav-input inp-cover" placeholder="0">
+              <input type="number" class="nav-input inp-cost" placeholder="0.00" step="any">
+            </div>
+            <div class="table-row row-wine" data-type="Wine">
+              <div class="meal-label">Breakfast - Wine</div>
+              <input type="number" class="nav-input inp-rev" placeholder="0.00" step="any">
+              <input type="number" class="nav-input inp-cover" placeholder="0">
+              <input type="number" class="nav-input inp-cost" placeholder="0.00" step="any">
+            </div>
+            <div class="table-row row-other" data-type="Other">
+              <div class="meal-label">Breakfast - Other</div>
+              <input type="number" class="nav-input inp-rev" placeholder="0.00" step="any">
+              <input type="number" class="nav-input inp-cover" placeholder="0">
+              <input type="number" class="nav-input inp-cost" placeholder="0.00" step="any">
+            </div>
+          </div>
+
+          <!-- Lunch Group -->
+          <div class="meal-group" data-meal="Lunch">
+            <div class="table-row row-food" data-type="Food">
+              <div class="meal-label">Lunch - Food</div>
+              <input type="number" class="nav-input inp-rev" placeholder="0.00" step="any">
+              <input type="number" class="nav-input inp-cover" placeholder="0">
+              <input type="number" class="nav-input inp-cost" placeholder="0.00" step="any">
+            </div>
+            <div class="table-row row-bev" data-type="Beverage">
+              <div class="meal-label">Lunch - Bev</div>
+              <input type="number" class="nav-input inp-rev" placeholder="0.00" step="any">
+              <input type="number" class="nav-input inp-cover" placeholder="0">
+              <input type="number" class="nav-input inp-cost" placeholder="0.00" step="any">
+            </div>
+            <div class="table-row row-wine" data-type="Wine">
+              <div class="meal-label">Lunch - Wine</div>
+              <input type="number" class="nav-input inp-rev" placeholder="0.00" step="any">
+              <input type="number" class="nav-input inp-cover" placeholder="0">
+              <input type="number" class="nav-input inp-cost" placeholder="0.00" step="any">
+            </div>
+            <div class="table-row row-other" data-type="Other">
+              <div class="meal-label">Lunch - Other</div>
+              <input type="number" class="nav-input inp-rev" placeholder="0.00" step="any">
+              <input type="number" class="nav-input inp-cover" placeholder="0">
+              <input type="number" class="nav-input inp-cost" placeholder="0.00" step="any">
+            </div>
+          </div>
+
+          <!-- Dinner Group -->
+          <div class="meal-group" data-meal="Dinner">
+            <div class="table-row row-food" data-type="Food">
+              <div class="meal-label">Dinner - Food</div>
+              <input type="number" class="nav-input inp-rev" placeholder="0.00" step="any">
+              <input type="number" class="nav-input inp-cover" placeholder="0">
+              <input type="number" class="nav-input inp-cost" placeholder="0.00" step="any">
+            </div>
+            <div class="table-row row-bev" data-type="Beverage">
+              <div class="meal-label">Dinner - Bev</div>
+              <input type="number" class="nav-input inp-rev" placeholder="0.00" step="any">
+              <input type="number" class="nav-input inp-cover" placeholder="0">
+              <input type="number" class="nav-input inp-cost" placeholder="0.00" step="any">
+            </div>
+            <div class="table-row row-wine" data-type="Wine">
+              <div class="meal-label">Dinner - Wine</div>
+              <input type="number" class="nav-input inp-rev" placeholder="0.00" step="any">
+              <input type="number" class="nav-input inp-cover" placeholder="0">
+              <input type="number" class="nav-input inp-cost" placeholder="0.00" step="any">
+            </div>
+            <div class="table-row row-other" data-type="Other">
+              <div class="meal-label">Dinner - Other</div>
+              <input type="number" class="nav-input inp-rev" placeholder="0.00" step="any">
+              <input type="number" class="nav-input inp-cover" placeholder="0">
+              <input type="number" class="nav-input inp-cost" placeholder="0.00" step="any">
+            </div>
+          </div>
+
+          <!-- Supper Group -->
+          <div class="meal-group" data-meal="Supper">
+            <div class="table-row row-food" data-type="Food">
+              <div class="meal-label">Supper - Food</div>
+              <input type="number" class="nav-input inp-rev" placeholder="0.00" step="any">
+              <input type="number" class="nav-input inp-cover" placeholder="0">
+              <input type="number" class="nav-input inp-cost" placeholder="0.00" step="any">
+            </div>
+            <div class="table-row row-bev" data-type="Beverage">
+              <div class="meal-label">Supper - Bev</div>
+              <input type="number" class="nav-input inp-rev" placeholder="0.00" step="any">
+              <input type="number" class="nav-input inp-cover" placeholder="0">
+              <input type="number" class="nav-input inp-cost" placeholder="0.00" step="any">
+            </div>
+            <div class="table-row row-wine" data-type="Wine">
+              <div class="meal-label">Supper - Wine</div>
+              <input type="number" class="nav-input inp-rev" placeholder="0.00" step="any">
+              <input type="number" class="nav-input inp-cover" placeholder="0">
+              <input type="number" class="nav-input inp-cost" placeholder="0.00" step="any">
+            </div>
+            <div class="table-row row-other" data-type="Other">
+              <div class="meal-label">Supper - Other</div>
+              <input type="number" class="nav-input inp-rev" placeholder="0.00" step="any">
+              <input type="number" class="nav-input inp-cover" placeholder="0">
+              <input type="number" class="nav-input inp-cost" placeholder="0.00" step="any">
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-save" id="btnSubmit">✨ Save Data to System</button>
+      </form>
+    </div>
+
+    <!-- TAB 2: DASHBOARD -->
+    <div id="tab-dashboard" class="tab-content">
+      <div class="header-container">
+        <h2>📈 Analytics Overview</h2>
+        <div class="action-group">
+          <button type="button" class="btn" style="border-color: #f59e0b; color: #d97706; background: #fffbeb;" onclick="refreshExcelData()">🔄 Refresh Excel</button>
+          <button type="button" class="btn btn-open" onclick="loadDashboardData()">🔄 Refresh</button>
+        </div>
+      </div>
+
+      <!-- Filter Bar -->
+      <div class="filter-bar">
+        <div class="date-filter-group">
+          <label>📅 Date Range:</label>
+          <input type="date" id="filterStart" class="filter-date-input" onchange="loadDashboardData()">
+          <span style="color: var(--text-muted);">-</span>
+          <input type="date" id="filterEnd" class="filter-date-input" onchange="loadDashboardData()">
+          <button type="button" class="outlet-pill" onclick="setDashboardToday()" style="margin-left: 6px; font-weight: 600;">📅 Today</button>
+        </div>
+
+        <div class="outlet-filter-group" id="outletPillsContainer">
+          <label>🍽️ Outlet:</label>
+          <button type="button" class="outlet-pill active" data-outlet="ALL" onclick="selectOutletFilter('ALL', this)">All Outlets</button>
+          <button type="button" class="outlet-pill" data-outlet="Reveira House" onclick="selectOutletFilter('Reveira House', this)">Reveira House</button>
+          <button type="button" class="outlet-pill" data-outlet="Junsai" onclick="selectOutletFilter('Junsai', this)">Junsai</button>
+          <button type="button" class="outlet-pill" data-outlet="Tapanyaki" onclick="selectOutletFilter('Tapanyaki', this)">Tapanyaki</button>
+          <button type="button" class="outlet-pill" data-outlet="Terrace" onclick="selectOutletFilter('Terrace', this)">Terrace</button>
+          <button type="button" class="outlet-pill" data-outlet="Juniper" onclick="selectOutletFilter('Juniper', this)">Juniper</button>
+          <button type="button" class="outlet-pill" data-outlet="Marcele" onclick="selectOutletFilter('Marcele', this)">Marcele</button>
+          <button type="button" class="outlet-pill" data-outlet="Canteen" onclick="selectOutletFilter('Canteen', this)">Canteen</button>
+        </div>
+      </div>
+
+      <!-- KPI Summary Cards -->
+      <div class="kpi-grid">
+        <div class="kpi-card kpi-blue">
+          <div class="kpi-title">Total Revenue</div>
+          <div class="kpi-value" id="kpiRevenue">฿0.00</div>
+        </div>
+        <div class="kpi-card kpi-purple">
+          <div class="kpi-title">Avg Check</div>
+          <div class="kpi-value" id="kpiAvgRev">฿0.00</div>
+        </div>
+        <div class="kpi-card kpi-red">
+          <div class="kpi-title">Total Cost</div>
+          <div class="kpi-value" id="kpiCost">฿0.00</div>
+        </div>
+        <div class="kpi-card kpi-teal">
+          <div class="kpi-title">Total Purchase</div>
+          <div class="kpi-value" id="kpiPurchase">฿0.00</div>
+        </div>
+        <div class="kpi-card kpi-indigo">
+          <div class="kpi-title">Total Issue</div>
+          <div class="kpi-value" id="kpiIssue">฿0.00</div>
+        </div>
+        <div class="kpi-card kpi-orange">
+          <div class="kpi-title">Total Cr Cost / OC</div>
+          <div class="kpi-value" id="kpiCrCost">฿0.00</div>
+        </div>
+        <div class="kpi-card kpi-green">
+          <div class="kpi-title">Gross Profit</div>
+          <div class="kpi-value" id="kpiProfit">฿0.00</div>
+        </div>
+      </div>
+          
+      <!-- Room & Guest Status Cards -->
+      <div class="kpi-grid-room" style="grid-template-columns: repeat(6, 1fr); margin-bottom: 14px;">
+        <div class="kpi-card kpi-green">
+          <div class="kpi-title">🍲 Food Rev & Cost %</div>
+          <div class="kpi-value" id="kpiFoodStats" style="font-size: 11.5px;">฿0.00 (0%)</div>
+        </div>
+        <div class="kpi-card kpi-purple">
+          <div class="kpi-title">🍷 Bev Rev & Cost %</div>
+          <div class="kpi-value" id="kpiBevStats" style="font-size: 11.5px;">฿0.00 (0%)</div>
+        </div>
+     
+        <div class="kpi-card kpi-blue">
+          <div class="kpi-title">Room Occupancy</div>
+          <div class="kpi-value" id="kpiOccupancy">0.00%</div>
+        </div>
+        <div class="kpi-card kpi-indigo">
+          <div class="kpi-title">Room Sold (T / MTD)</div>
+          <div class="kpi-value" id="kpiRoomSoldStats" style="font-size: 11.5px;">0 / 0</div>
+        </div>
+        
+        <div class="kpi-card kpi-teal">
+          <div class="kpi-title">Total Guests (T / MTD)</div>
+          <div class="kpi-value" id="kpiGuestStats" style="font-size: 11.5px;">0 / 0</div>
+        </div>
+        <div class="kpi-card kpi-orange">
+          <div class="kpi-title">☀️ Weather</div>
+          <div class="kpi-value" id="kpiWeatherDisplay">-</div>
+        </div>
+      </div>
+
+      <!-- Charts Section -->
+      <div class="charts-grid" id="mainChartsSection">
+        <div class="chart-card">
+          <h3>📊 Revenue & Cost Comparison by Outlet</h3>
+          <canvas id="outletBarChart" height="150"></canvas>
+        </div>
+
+        <div class="chart-card">
+          <h3>🍩 Revenue Share by Category</h3>
+          <canvas id="categoryDonutChart" height="150"></canvas>
+        </div>
+
+        <div class="chart-full chart-card">
+          <h3>📈 Daily Revenue & Cost Trend</h3>
+          <canvas id="trendLineChart" height="85"></canvas>
+        </div>
+      </div>
+
+      <!-- Outlet Breakdown Summary Table Card -->
+      <div class="dashboard-table-card" id="outletSummaryCard">
+        <h3>📋 Outlet Summary Breakdown</h3>
+        <div class="dash-table-wrapper" style="overflow-x: auto;">
+          <table class="dash-table">
+            <thead>
+              <tr>
+                <th>Outlet</th>
+                <th>Revenue (THB)</th>
+                <th>Avg Check (THB)</th>
+                <th>Cost (THB)</th>
+                <th>Cost %</th>
+                <th>Purchase</th>
+                <th>Issue</th>
+                <th>Transfer In</th>
+                <th>Transfer Out</th>
+                <th>Cr Cost</th>
+              </tr>
+            </thead>
+            <tbody id="outletTableBody">
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Food Summary Breakdown Table Card -->
+      <div class="dashboard-table-card" id="foodSummaryCard" style="margin-top: 15px;">
+        <h3>🍔 Food Summary Breakdown</h3>
+        <div class="dash-table-wrapper" style="overflow-x: auto;">
+          <table class="dash-table">
+            <thead>
+              <tr>
+                <th>Outlet</th>
+                <th>Food Revenue</th>
+                <th>Food Cost</th>
+                <th>Food Cost %</th>
+              </tr>
+            </thead>
+            <tbody id="foodSummaryTableBody">
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Beverage Summary Breakdown Table Card -->
+      <div class="dashboard-table-card" id="bevSummaryCard" style="margin-top: 15px;">
+        <h3>🍷 Beverage Summary Breakdown</h3>
+        <div class="dash-table-wrapper" style="overflow-x: auto;">
+          <table class="dash-table">
+            <thead>
+              <tr>
+                <th>Outlet</th>
+                <th>Bev Revenue</th>
+                <th>Bev Cost</th>
+                <th>Bev Cost %</th>
+              </tr>
+            </thead>
+            <tbody id="bevSummaryTableBody">
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Staff Canteen Summary Table -->
+      <div class="dashboard-table-card" id="canteenCard" style="margin-top: 15px;">
+        <h3 style="color: var(--text-gold);">👥 Staff Canteen Summary (Cost per Day / per Meal)</h3>
+        <div class="dash-table-wrapper" style="overflow-x: auto;">
+          <table class="dash-table">
+            <thead>
+              <tr>
+                <th>Outlet</th>
+                <th>Total Headcount (Cover)</th>
+                <th>Net Cost (THB)</th>
+                <th>Cost per Day</th>
+                <th>Cost per Meal</th>
+                <th>Budget (60 ฿/Person)</th>
+              </tr>
+            </thead>
+            <tbody id="canteenTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: SHIFT ANALYTICS -->
+    <div id="tab-shift" class="tab-content">
+      <div class="header-container">
+        <h2>🕒 Outlet & Shift (Meal) Analytics Breakdown</h2>
+        <div class="action-group" style="display: flex; gap: 8px; align-items: center;">
+          <div style="display: inline-flex; background: var(--card-inner); border: 1px solid var(--gold-border); border-radius: 6px; padding: 2px;">
+            <button type="button" id="modeRawBtn" class="outlet-pill active" onclick="setCostMode('raw', this)" style="border-radius: 4px; border: none;">Raw Meal Cost</button>
+            <button type="button" id="modeAllocBtn" class="outlet-pill" onclick="setCostMode('allocated', this)" style="border-radius: 4px; border: none;">Allocated Net Cost</button>
+          </div>
+          <button type="button" class="btn btn-open" onclick="loadShiftData()">🔄 Refresh Shift Data</button>
+        </div>
+      </div>
+
+      <!-- Filter Bar for Shift -->
+      <div class="filter-bar">
+        <div class="date-filter-group">
+          <label>📅 Date Range:</label>
+          <input type="date" id="shiftFilterStart" class="filter-date-input" onchange="loadShiftData()">
+          <span style="color: var(--text-muted);">-</span>
+          <input type="date" id="shiftFilterEnd" class="filter-date-input" onchange="loadShiftData()">
+          <button type="button" class="outlet-pill" onclick="setShiftToday()" style="margin-left: 6px;">📅 Today</button>
+        </div>
+      </div>
+
+      <!-- Shift Summary Table -->
+      <div class="dashboard-table-card">
+        <h3>📋 Performance Breakdown by Outlet & Shift (Meal) - Food vs Beverage</h3>
+        <div class="dash-table-wrapper" style="overflow-x: auto;">
+          <table class="dash-table">
+            <thead>
+              <tr>
+                <th>Outlet</th>
+                <th>Shift / Meal</th>
+                <th>Food Rev (THB)</th>
+                <th>Food Cost</th>
+                <th>Food Cost %</th>
+                <th>Bev Rev (THB)</th>
+                <th>Bev Cost</th>
+                <th>Bev Cost %</th>
+                <th>Total Rev</th>
+                <th>Total Cost</th>
+                <th>Cost %</th>
+              </tr>
+            </thead>
+            <tbody id="shiftTableBody">
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Shift Chart Section -->
+      <div class="charts-grid" style="margin-top: 14px;">
+        <div class="chart-full chart-card">
+          <h3>📊 Revenue Comparison by Shift (Meal) per Outlet</h3>
+          <canvas id="shiftBarChart" height="110"></canvas>
+        </div>
+      </div>
+    </div>
+    </div>
+  </div>
+
+  <script>
+    // ===== Login / Access Control =====
+    const PASSWORDS = {
+      '1234': 'staff',
+      'admin123': 'admin'
+    };
+
+    function applyAccessControl(role) {
+      const entryBtn = document.getElementById('dataEntryTabBtn');
+      if (role === 'admin') {
+        entryBtn.classList.remove('app-hidden');
+      } else {
+        entryBtn.classList.add('app-hidden');
+        // ถ้าแท็บ Data Entry ถูกซ่อน ให้เริ่มที่ Dashboard แทน
+        switchTab('dashboard');
+      }
+    }
+
+    function showApp(role) {
+      document.getElementById('loginOverlay').classList.add('app-hidden');
+      document.getElementById('appContainer').classList.remove('app-hidden');
+      applyAccessControl(role);
+    }
+
+    function logout() {
+      sessionStorage.removeItem('navera_role');
+      document.getElementById('appContainer').classList.add('app-hidden');
+      document.getElementById('loginOverlay').classList.remove('app-hidden');
+      document.getElementById('loginPassword').value = '';
+      document.getElementById('loginError').textContent = '';
+      document.getElementById('loginPassword').focus();
+    }
+
+    function attemptLogin() {
+      const input = document.getElementById('loginPassword');
+      const errorEl = document.getElementById('loginError');
+      const card = document.getElementById('loginCard');
+      const pass = input.value.trim();
+      const role = PASSWORDS[pass];
+
+      if (role) {
+        errorEl.textContent = '';
+        sessionStorage.setItem('navera_role', role);
+        showApp(role);
+      } else {
+        errorEl.textContent = 'รหัสผ่านไม่ถูกต้อง';
+        card.classList.remove('shake');
+        void card.offsetWidth;
+        card.classList.add('shake');
+        input.value = '';
+        input.focus();
+      }
+    }
+
+    document.getElementById('loginPassword').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') attemptLogin();
+    });
+
+    (function checkExistingSession() {
+      const savedRole = sessionStorage.getItem('navera_role');
+      if (savedRole === 'admin' || savedRole === 'staff') {
+        showApp(savedRole);
+      } else {
+        document.getElementById('loginPassword').focus();
+      }
+    })();
+
+    document.getElementById('revDate').value = new Date().toISOString().split('T')[0];
+
+    document.getElementById('outlet').addEventListener('change', function() {
+      const isCanteen = this.value === 'Canteen';
+      
+      const roomAvailInput = document.getElementById('roomAvailable');
+      const roomSoldInput = document.getElementById('roomSold');
+      const comHuInput = document.getElementById('comHuRoom');
+      const totalGuestInput = document.getElementById('totalGuest');
+
+      [roomAvailInput, roomSoldInput, comHuInput, totalGuestInput].forEach(input => {
+        if (isCanteen) {
+          input.value = '0';
+          input.disabled = true;
+          input.style.backgroundColor = '#f1f1f1';
+          input.style.cursor = 'not-allowed';
+        } else {
+          input.disabled = false;
+          input.style.backgroundColor = '#ffffff';
+          input.style.cursor = 'text';
+        }
+      });
+
+      const canteenSection = document.getElementById('canteenFormSection');
+      const standardTableSection = document.querySelector('.table-section');
+      const categoryRow = document.querySelector('.category-row');
+
+      if (isCanteen) {
+        canteenSection.style.display = 'block';
+        standardTableSection.style.display = 'none';
+        categoryRow.style.display = 'none';
+      } else {
+        canteenSection.style.display = 'none';
+        standardTableSection.style.display = 'block';
+        categoryRow.style.display = 'flex';
+      }
+    });
+
+    function calculateCanteenBudget() {
+      const headcount = Number(document.getElementById('canteenCover').value) || 0;
+      const actualCost = Number(document.getElementById('canteenTotalCost').value) || 0;
+      
+      const targetBudget = headcount * 60;
+      const diff = actualCost - targetBudget;
+
+      document.getElementById('canteenBudgetDisplay').textContent = formatCurrency(targetBudget);
+      
+      const diffEl = document.getElementById('canteenDiffDisplay');
+      diffEl.textContent = formatCurrency(diff);
+      diffEl.style.color = diff > 0 ? 'var(--accent-danger)' : '#16a34a';
+    }
+
+    function setDashboardToday() {
+      const todayStr = new Date().toISOString().split('T')[0];
+      document.getElementById('filterStart').value = todayStr;
+      document.getElementById('filterEnd').value = todayStr;
+      loadDashboardData();
+    }
+
+    function setShiftToday() {
+      const todayStr = new Date().toISOString().split('T')[0];
+      document.getElementById('shiftFilterStart').value = todayStr;
+      document.getElementById('shiftFilterEnd').value = todayStr;
+      loadShiftData();
+    }
+
+
+    const rvCategoryMap = {
+      'Food': 'RV-Food',
+      'Beverage': 'RV-Beverage',
+      'Wine': 'RV-Wine',
+      'Other': 'RV-Other'
+    };
+
+    let selectedOutletFilter = 'ALL';
+    let currentCostMode = 'raw';
+
+    function setCostMode(mode, btnElement) {
+      currentCostMode = mode;
+      document.querySelectorAll('#tab-shift .outlet-pill').forEach(btn => btn.classList.remove('active'));
+      btnElement.classList.add('active');
+      loadShiftData();
+    }
+
+    function selectOutletFilter(outletName, btnElement) {
+      selectedOutletFilter = outletName;
+      document.querySelectorAll('.outlet-pill').forEach(btn => btn.classList.remove('active'));
+      btnElement.classList.add('active');
+      loadDashboardData();
+    }
+
+    document.querySelectorAll('.table-row').forEach(row => {
+      const type = row.dataset.type;
+      const revInput = row.querySelector('.inp-rev');
+
+      if (revInput && type) {
+        revInput.addEventListener('input', () => {
+          if (Number(revInput.value) > 0) {
+            const cb = document.querySelector(`input[name="category"][value="${rvCategoryMap[type]}"]`);
+            if (cb) cb.checked = true;
+          }
+        });
+      }
+    });
+
+    document.getElementById('revenueForm').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        const inputs = Array.from(document.querySelectorAll('.nav-input'));
+        const currentIndex = inputs.indexOf(e.target);
+
+        if (currentIndex > -1) {
+          e.preventDefault();
+          if (e.shiftKey) {
+            if (currentIndex > 0) inputs[currentIndex - 1].focus();
+          } else {
+            if (currentIndex < inputs.length - 1) inputs[currentIndex + 1].focus();
+            else document.getElementById('btnSubmit').focus();
+          }
+        }
+      }
+    });
+
+    function switchTab(tabId) {
+      if (tabId === 'entry' && sessionStorage.getItem('navera_role') !== 'admin') {
+        tabId = 'dashboard';
+      }
+
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+      if (tabId === 'entry') {
+        document.querySelector('.tab-btn:nth-child(1)').classList.add('active');
+        document.getElementById('tab-entry').classList.add('active');
+      } else if (tabId === 'dashboard') {
+        document.querySelector('.tab-btn:nth-child(2)').classList.add('active');
+        document.getElementById('tab-dashboard').classList.add('active');
+        loadDashboardData();
+      } else if (tabId === 'shift') {
+        document.querySelector('.tab-btn:nth-child(3)').classList.add('active');
+        document.getElementById('tab-shift').classList.add('active');
+        loadShiftData();
+      }
+    }
+
+    async function openExcelFile() {
+      try {
+        const response = await fetch('/api/open-excel');
+        const result = await response.json();
+        if (!result.success) alert(result.message);
+      } catch (err) {
+        alert('Server connection failed.');
+      }
+    }
+
+    async function rebuildExcelFile() {
+      if (!confirm('Are you sure you want to rebuild the Excel file?')) return;
+      try {
+        const response = await fetch('/api/rebuild-excel', { method: 'POST' });
+        const result = await response.json();
+        alert(result.message);
+      } catch (err) {
+        alert('Server connection failed.');
+      }
+    }
+
+    async function seedRandomData() {
+      const confirmSeed = confirm('🎲 Do you want to generate 30 days of random data?');
+      if (!confirmSeed) return;
+
+      try {
+        const response = await fetch('/api/seed-random', { method: 'POST' });
+        const result = await response.json();
+        alert(result.message);
+        if (result.success && document.getElementById('tab-dashboard').classList.contains('active')) {
+          loadDashboardData();
+        }
+      } catch (err) {
+        alert('Server connection failed.');
+      }
+    }
+
+    async function deleteRecords() {
+      const date = document.getElementById('revDate').value;
+      const outlet = document.getElementById('outlet').value;
+
+      if (!date || !outlet) {
+        alert('⚠️ Please select "Date" and "Outlet" before deleting.');
+        return;
+      }
+
+      const confirmDelete = confirm(`🚨 Confirm deletion for date ${date}, outlet ${outlet}?`);
+      if (!confirmDelete) return;
+
+      try {
+        const response = await fetch('/api/delete-records', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ date, outlet })
+        });
+
+        const result = await response.json();
+        alert(result.message);
+      } catch (err) {
+        alert('Server connection failed.');
+      }
+    }
+
+    document.getElementById('revenueForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const date = document.getElementById('revDate').value;
+      const outlet = document.getElementById('outlet').value;
+      const totalPurchase = Number(document.getElementById('outletPurchase').value) || 0;
+      const totalIssue = Number(document.getElementById('outletIssue').value) || 0;
+      const transferIn = Number(document.getElementById('outletTransferIn').value) || 0;
+      const transferOut = Number(document.getElementById('outletTransferOut').value) || 0;
+      const crCost = Number(document.getElementById('outletCrCost').value) || 0;
+
+      const roomAvailable = Number(document.getElementById('roomAvailable').value) || 0;
+      const roomSold = Number(document.getElementById('roomSold').value) || 0;
+      const comHuRoom = Number(document.getElementById('comHuRoom').value) || 0;
+      const totalGuest = Number(document.getElementById('totalGuest').value) || 0;
+      const weather = document.getElementById('weather').value || '';
+
+      const isCanteen = outlet === 'Canteen';
+      const rowsToSave = [];
+
+      if (isCanteen) {
+        const canteenCover = Number(document.getElementById('canteenCover').value) || 0;
+        const canteenCost = Number(document.getElementById('canteenTotalCost').value) || 0;
+
+        if (canteenCover > 0 || canteenCost > 0 || totalPurchase > 0 || totalIssue > 0) {
+          rowsToSave.push({
+            date: date,
+            outlet: 'Canteen',
+            category: 'RV-Food',
+            meal: 'Lunch',
+            revenue: 0,
+            cover: canteenCover,
+            cost: canteenCost
+          });
+        }
+      } else {
+        const mealGroups = document.querySelectorAll('.meal-group');
+        mealGroups.forEach(group => {
+          const meal = group.dataset.meal;
+          const groupRows = group.querySelectorAll('.table-row');
+
+          groupRows.forEach(row => {
+            const type = row.dataset.type;
+            const rvCat = rvCategoryMap[type];
+
+            const rev = Number(row.querySelector('.inp-rev')?.value) || 0;
+            const cover = Number(row.querySelector('.inp-cover')?.value) || 0;
+            const cost = Number(row.querySelector('.inp-cost')?.value) || 0;
+
+            if (rev > 0 || cost > 0 || cover > 0) {
+              rowsToSave.push({
+                date: date,
+                outlet: outlet,
+                category: rvCat,
+                meal: meal,
+                revenue: rev,
+                cover: cover,
+                cost: cost
+              });
+            }
+          });
+        });
+      }
+
+      const hasAdjustment = totalPurchase > 0 || totalIssue > 0 || transferIn > 0 || transferOut > 0 || crCost > 0;
+      if (rowsToSave.length === 0 && !hasAdjustment) {
+        alert('⚠️ Please enter at least 1 revenue or cost adjustment item.');
+        return;
+      }
+
+      const payload = {
+        date: date,
+        outlet: outlet,
+        purchase: totalPurchase,
+        issue: totalIssue,
+        transferIn,
+        transferOut,
+        crCost,
+        roomAvailable,
+        roomSold,
+        comHuRoom,
+        totalGuest,
+        weather,
+        records: rowsToSave
+      };
+
+      try {
+        const checkRes = await fetch('/api/check-duplicate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ records: rowsToSave, date, outlet })
+        });
+
+        if (checkRes.ok) {
+          const checkResult = await checkRes.json();
+          if (checkResult.isDuplicate) {
+            const confirmSave = confirm(`⚠️ Warning: ${checkResult.message || 'Duplicate data detected'}\n\nDo you want to proceed?`);
+            if (!confirmSave) return;
+          }
+        }
+
+        const response = await fetch('/api/save-excel', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const result = await response.json();
+        
+        if (result.success) {
+          alert('Data saved successfully!');
+          document.getElementById('revenueForm').reset();
+          document.getElementById('revDate').value = new Date().toISOString().split('T')[0];
+          document.getElementById('outlet').focus();
+        } else {
+          alert('Error: ' + result.message);
+        }
+      } catch (err) {
+        alert('Server connection failed.');
+      }
+    });
+
+    let outletBarChartInstance = null;
+    let categoryDonutChartInstance = null;
+    let trendLineChartInstance = null;
+    let shiftBarChartInstance = null;
+
+    const formatCurrency = (val) => '฿' + Number(val || 0).toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+    async function loadDashboardData() {
+      const startDate = document.getElementById('filterStart').value;
+      const endDate = document.getElementById('filterEnd').value;
+      const outlet = selectedOutletFilter;
+
+      // 👉 ควบคุมการซ่อน/แสดงส่วนกราฟและตารางหลักเมื่อเลือก Canteen
+      const isCanteen = outlet === 'Canteen';
+      const mainChartsSection = document.getElementById('mainChartsSection');
+      const outletSummaryCard = document.getElementById('outletSummaryCard');
+      const foodSummaryCard = document.getElementById('foodSummaryCard');
+      const bevSummaryCard = document.getElementById('bevSummaryCard');
+
+      if (mainChartsSection) mainChartsSection.style.display = isCanteen ? 'none' : 'grid';
+      if (outletSummaryCard) outletSummaryCard.style.display = isCanteen ? 'none' : 'block';
+      if (foodSummaryCard) foodSummaryCard.style.display = isCanteen ? 'none' : 'block';
+      if (bevSummaryCard) bevSummaryCard.style.display = isCanteen ? 'none' : 'block';
+
+      try {
+        const query = new URLSearchParams();
+        if (startDate) query.append('startDate', startDate);
+        if (endDate) query.append('endDate', endDate);
+        if (outlet && outlet !== 'ALL') query.append('outlet', outlet);
+
+        const res = await fetch(`/api/dashboard-summary?${query.toString()}&_t=${Date.now()}`);
+        const result = await res.json();
+
+        if (!result.success) return;
+
+        const data = result.data;
+
+        if (!startDate && data.dateRange.min) document.getElementById('filterStart').value = data.dateRange.min;
+        if (!endDate && data.dateRange.max) document.getElementById('filterEnd').value = data.dateRange.max;
+
+        const avgTotalCheck = data.kpi.totalCover > 0 ? (data.kpi.totalRevenue / data.kpi.totalCover) : 0;
+
+        document.getElementById('kpiRevenue').textContent = formatCurrency(data.kpi.totalRevenue);
+        document.getElementById('kpiAvgRev').textContent = formatCurrency(avgTotalCheck);
+        document.getElementById('kpiCost').textContent = formatCurrency(data.kpi.totalCost);
+        document.getElementById('kpiPurchase').textContent = formatCurrency(data.kpi.totalPurchase || 0);
+        document.getElementById('kpiIssue').textContent = formatCurrency(data.kpi.totalIssue || 0);
+        document.getElementById('kpiCrCost').textContent = formatCurrency(data.kpi.totalCrCost || 0);
+        document.getElementById('kpiProfit').textContent = formatCurrency(data.kpi.grossProfit);
+
+        const occRate = data.kpi.occupancyRate || 0;
+        const roomSoldToday = data.kpi.roomSoldToday || 0;
+        const roomSoldMtd = data.kpi.roomSoldMtd || 0;
+        const guestToday = data.kpi.guestToday || 0;
+        const guestMtd = data.kpi.guestMtd || 0;
+        const weatherCondition = data.kpi.weather || '-';
+        
+        document.getElementById('kpiOccupancy').textContent = occRate.toFixed(2) + '%';
+        document.getElementById('kpiRoomSoldStats').textContent = `${roomSoldToday.toLocaleString()} / ${roomSoldMtd.toLocaleString()}`;
+        document.getElementById('kpiGuestStats').textContent = `${guestToday.toLocaleString()} / ${guestMtd.toLocaleString()}`;
+        document.getElementById('kpiWeatherDisplay').textContent = weatherCondition;
+
+        const foodRev = data.kpi.foodRevenue || 0;
+        const foodCostPct = data.kpi.foodCostPct || 0;
+        const bevRev = data.kpi.bevRevenue || 0;
+        const bevCostPct = data.kpi.bevCostPct || 0;
+
+        document.getElementById('kpiFoodStats').textContent = `${formatCurrency(foodRev)} (${foodCostPct.toFixed(1)}%)`;
+        document.getElementById('kpiBevStats').textContent = `${formatCurrency(bevRev)} (${bevCostPct.toFixed(1)}%)`;
+
+        if (!isCanteen) {
+          renderCharts(data);
+          renderSummaryTable(data);
+          renderFoodSummaryTable(data);
+          renderBevSummaryTable(data);
+        }
+        renderCanteenTable(data);
+      } catch (err) {
+        console.error('Error loading dashboard:', err);
+      }
+    }
+
+    async function loadShiftData() {
+      const startDate = document.getElementById('shiftFilterStart').value;
+      const endDate = document.getElementById('shiftFilterEnd').value;
+
+      try {
+        const query = new URLSearchParams();
+        if (startDate) query.append('startDate', startDate);
+        if (endDate) query.append('endDate', endDate);
+        query.append('mode', currentCostMode);
+
+        const res = await fetch(`/api/shift-summary?${query.toString()}&_t=${Date.now()}`);
+        const result = await res.json();
+
+        if (!result.success) return;
+
+        const data = result.data;
+
+        if (!startDate && data.dateRange.min) document.getElementById('shiftFilterStart').value = data.dateRange.min;
+        if (!endDate && data.dateRange.max) document.getElementById('shiftFilterEnd').value = data.dateRange.max;
+
+        renderShiftTable(data.rows);
+        renderShiftChart(data.chartData);
+      } catch (err) {
+        console.error('Error loading shift data:', err);
+      }
+    }
+
+    function renderShiftTable(rows) {
+      const tbody = document.getElementById('shiftTableBody');
+      tbody.innerHTML = '';
+
+      if (!rows || rows.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="11" style="text-align: center; color: var(--text-muted);">No data available for selected period</td></tr>';
+        return;
+      }
+
+      const grouped = {};
+      rows.forEach(r => {
+        if (!grouped[r.outlet]) {
+          grouped[r.outlet] = [];
+        }
+        grouped[r.outlet].push(r);
+      });
+
+      let grandFoodRev = 0;
+      let grandFoodCost = 0;
+      let grandBevRev = 0;
+      let grandBevCost = 0;
+      let grandTotalRev = 0;
+      let grandTotalCost = 0;
+
+      Object.keys(grouped).forEach(outletName => {
+        const outletRows = grouped[outletName];
+        let subFoodRev = 0;
+        let subFoodCost = 0;
+        let subBevRev = 0;
+        let subBevCost = 0;
+        let subTotalRev = 0;
+        let subTotalCost = 0;
+
+        outletRows.forEach(r => {
+          subFoodRev += r.foodRev;
+          subFoodCost += r.foodCost;
+          subBevRev += r.bevRev;
+          subBevCost += r.bevCost;
+          subTotalRev += r.totalRev;
+          subTotalCost += r.totalCost;
+
+          const foodCostPct = r.foodRev > 0 ? ((r.foodCost / r.foodRev) * 100).toFixed(2) + '%' : '0.00%';
+          const bevCostPct = r.bevRev > 0 ? ((r.bevCost / r.bevRev) * 100).toFixed(2) + '%' : '0.00%';
+          const totalCostPct = r.totalRev > 0 ? ((r.totalCost / r.totalRev) * 100).toFixed(2) + '%' : '0.00%';
+
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td style="text-align: left; font-weight: 600;">${r.outlet}</td>
+            <td><span style="background: #f7f0e6; padding: 2px 8px; border-radius: 4px; font-weight: 500; color: var(--text-gold);">${r.meal}</span></td>
+            <td>${formatCurrency(r.foodRev)}</td>
+            <td>${formatCurrency(r.foodCost)}</td>
+            <td>${foodCostPct}</td>
+            <td>${formatCurrency(r.bevRev)}</td>
+            <td>${formatCurrency(r.bevCost)}</td>
+            <td>${bevCostPct}</td>
+            <td>${formatCurrency(r.totalRev)}</td>
+            <td>${formatCurrency(r.totalCost)}</td>
+            <td>${totalCostPct}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+
+        grandFoodRev += subFoodRev;
+        grandFoodCost += subFoodCost;
+        grandBevRev += subBevRev;
+        grandBevCost += subBevCost;
+        grandTotalRev += subTotalRev;
+        grandTotalCost += subTotalCost;
+
+        const subFoodCostPct = subFoodRev > 0 ? ((subFoodCost / subFoodRev) * 100).toFixed(2) + '%' : '0.00%';
+        const subBevCostPct = subBevRev > 0 ? ((subBevCost / subBevRev) * 100).toFixed(2) + '%' : '0.00%';
+        const subTotalCostPct = subTotalRev > 0 ? ((subTotalCost / subTotalRev) * 100).toFixed(2) + '%' : '0.00%';
+
+        const subTr = document.createElement('tr');
+        subTr.style.backgroundColor = '#fdfbf7';
+        subTr.style.fontWeight = '700';
+        subTr.style.borderTop = '1px solid var(--gold-border)';
+        subTr.style.borderBottom = '2px solid var(--gold-border)';
+        subTr.style.color = 'var(--text-gold)';
+        subTr.innerHTML = `
+          <td style="text-align: left;">📁 Total (${outletName})</td>
+          <td>-</td>
+          <td>${formatCurrency(subFoodRev)}</td>
+          <td>${formatCurrency(subFoodCost)}</td>
+          <td>${subFoodCostPct}</td>
+          <td>${formatCurrency(subBevRev)}</td>
+          <td>${formatCurrency(subBevCost)}</td>
+          <td>${subBevCostPct}</td>
+          <td>${formatCurrency(subTotalRev)}</td>
+          <td>${formatCurrency(subTotalCost)}</td>
+          <td>${subTotalCostPct}</td>
+        `;
+        tbody.appendChild(subTr);
+      });
+
+      const grandFoodCostPct = grandFoodRev > 0 ? ((grandFoodCost / grandFoodRev) * 100).toFixed(2) + '%' : '0.00%';
+      const grandBevCostPct = grandBevRev > 0 ? ((grandBevCost / grandBevRev) * 100).toFixed(2) + '%' : '0.00%';
+      const grandTotalCostPct = grandTotalRev > 0 ? ((grandTotalCost / grandTotalRev) * 100).toFixed(2) + '%' : '0.00%';
+
+      const grandTr = document.createElement('tr');
+      grandTr.className = 'total-row';
+      grandTr.style.backgroundColor = '#f7f0e6';
+      grandTr.style.fontSize = '12.5px';
+      grandTr.innerHTML = `
+        <td style="text-align: left;">🌟 Grand Total (All Outlets)</td>
+        <td>-</td>
+        <td>${formatCurrency(grandFoodRev)}</td>
+        <td>${formatCurrency(grandFoodCost)}</td>
+        <td>${grandFoodCostPct}</td>
+        <td>${formatCurrency(grandBevRev)}</td>
+        <td>${formatCurrency(grandBevCost)}</td>
+        <td>${grandBevCostPct}</td>
+        <td>${formatCurrency(grandTotalRev)}</td>
+        <td>${formatCurrency(grandTotalCost)}</td>
+        <td>${grandTotalCostPct}</td>
+      `;
+      tbody.appendChild(grandTr);
+    }
+
+    function renderShiftChart(chartData) {
+      const ctx = document.getElementById('shiftBarChart').getContext('2d');
+      if (shiftBarChartInstance) shiftBarChartInstance.destroy();
+
+      shiftBarChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: chartData.labels,
+          datasets: chartData.datasets
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { position: 'bottom', labels: { color: '#3d312a' } },
+            tooltip: { 
+              callbacks: { 
+                label: (ctx) => `${ctx.dataset.label}: ฿${Number(ctx.raw).toLocaleString('th-TH', { minimumFractionDigits: 2 })}` 
+              } 
+            }
+          },
+          scales: {
+            y: { 
+              ticks: { callback: (val) => '฿' + Number(val).toLocaleString() }, 
+              grid: { color: '#f3e8dc' } 
+            },
+            x: { grid: { display: false } }
+          }
+        }
+      });
+    }
+
+    function renderSummaryTable(data) {
+      const tbody = document.getElementById('outletTableBody');
+      tbody.innerHTML = '';
+
+      const labels = data.byOutlet.labels || [];
+      const revenues = data.byOutlet.revenues || [];
+      const netCosts = data.byOutlet.netCosts || [];
+      const covers = data.byOutlet.covers || [];
+      const purchases = data.byOutlet.purchases || [];
+      const issues = data.byOutlet.issues || [];
+      const transferIns = data.byOutlet.transferIns || [];
+      const transferOuts = data.byOutlet.transferOuts || [];
+      const crCosts = data.byOutlet.crCosts || [];
+
+      labels.forEach((outletName, i) => {
+        const rev = Number(revenues[i]) || 0;
+        const nCost = Number(netCosts[i]) || 0;
+        const cov = Number(covers[i]) || 0;
+        const pur = Number(purchases[i]) || 0;
+        const iss = Number(issues[i]) || 0;
+        const tIn = Number(transferIns[i]) || 0;
+        const tOut = Number(transferOuts[i]) || 0;
+        const cr = Number(crCosts[i]) || 0;
+
+        const avgCheck = cov > 0 ? (rev / cov) : 0;
+        const costPct = rev > 0 ? ((nCost / rev) * 100).toFixed(2) + '%' : '0.00%';
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${outletName}</td>
+          <td>${formatCurrency(rev)}</td>
+          <td>${formatCurrency(avgCheck)}</td>
+          <td>${formatCurrency(nCost)}</td>
+          <td>${costPct}</td>
+          <td>${pur > 0 ? formatCurrency(pur) : '-'}</td>
+          <td>${iss > 0 ? formatCurrency(iss) : '-'}</td>
+          <td>${tIn > 0 ? formatCurrency(tIn) : '-'}</td>
+          <td>${tOut > 0 ? formatCurrency(tOut) : '-'}</td>
+          <td>${cr > 0 ? formatCurrency(cr) : '-'}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      const totalAvgCheck = data.kpi.totalCover > 0 ? (data.kpi.totalRevenue / data.kpi.totalCover) : 0;
+      const totalTr = document.createElement('tr');
+      totalTr.className = 'total-row';
+      totalTr.innerHTML = `
+        <td>Grand Total</td>
+        <td>${formatCurrency(data.kpi.totalRevenue)}</td>
+        <td>${formatCurrency(totalAvgCheck)}</td>
+        <td>${formatCurrency(data.kpi.totalNetCost)}</td>
+        <td>${Number(data.kpi.costPercentage || 0).toFixed(2)}%</td>
+        <td>${formatCurrency(data.kpi.totalPurchase || 0)}</td>
+        <td>${formatCurrency(data.kpi.totalIssue || 0)}</td>
+        <td>${formatCurrency(data.kpi.totalTransferIn || 0)}</td>
+        <td>${formatCurrency(data.kpi.totalTransferOut || 0)}</td>
+        <td>${formatCurrency(data.kpi.totalCrCost || 0)}</td>
+      `;
+      tbody.appendChild(totalTr);
+    }
+
+    function renderFoodSummaryTable(data) {
+      const tbody = document.getElementById('foodSummaryTableBody');
+      tbody.innerHTML = '';
+
+      const labels = data.byOutletFood?.labels || data.byOutlet.labels || [];
+      const foodRevs = data.byOutletFood?.revenues || [];
+      const foodCosts = data.byOutletFood?.costs || [];
+
+      let grandFoodRev = 0, grandFoodCost = 0;
+
+      labels.forEach((outletName, i) => {
+        const fRev = Number(foodRevs[i]) || 0; 
+        const fCost = Number(foodCosts[i]) || 0;
+
+        grandFoodRev += fRev;
+        grandFoodCost += fCost;
+
+        const fCostPct = fRev > 0 ? ((fCost / fRev) * 100).toFixed(2) + '%' : '0.00%';
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${outletName}</td>
+          <td>${formatCurrency(fRev)}</td>
+          <td>${formatCurrency(fCost)}</td>
+          <td>${fCostPct}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      const grandFCostPct = grandFoodRev > 0 ? ((grandFoodCost / grandFoodRev) * 100).toFixed(2) + '%' : '0.00%';
+
+      const totalTr = document.createElement('tr');
+      totalTr.className = 'total-row';
+      totalTr.innerHTML = `
+        <td>Grand Total</td>
+        <td>${formatCurrency(grandFoodRev)}</td>
+        <td>${formatCurrency(grandFoodCost)}</td>
+        <td>${grandFCostPct}</td>
+      `;
+      tbody.appendChild(totalTr);
+    }
+
+    function renderBevSummaryTable(data) {
+      const tbody = document.getElementById('bevSummaryTableBody');
+      tbody.innerHTML = '';
+
+      const labels = data.byOutletBev?.labels || data.byOutlet.labels || [];
+      const bevRevs = data.byOutletBev?.revenues || [];
+      const bevCosts = data.byOutletBev?.costs || [];
+
+      let grandBevRev = 0, grandBevCost = 0;
+
+      labels.forEach((outletName, i) => {
+        const bRev = Number(bevRevs[i]) || 0;
+        const bCost = Number(bevCosts[i]) || 0;
+
+        grandBevRev += bRev;
+        grandBevCost += bCost;
+
+        const bCostPct = bRev > 0 ? ((bCost / bRev) * 100).toFixed(2) + '%' : '0.00%';
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${outletName}</td>
+          <td>${formatCurrency(bRev)}</td>
+          <td>${formatCurrency(bCost)}</td>
+          <td>${bCostPct}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      const grandBCostPct = grandBevRev > 0 ? ((grandBevCost / grandBevRev) * 100).toFixed(2) + '%' : '0.00%';
+
+      const totalTr = document.createElement('tr');
+      totalTr.className = 'total-row';
+      totalTr.innerHTML = `
+        <td>Grand Total</td>
+        <td>${formatCurrency(grandBevRev)}</td>
+        <td>${formatCurrency(grandBevCost)}</td>
+        <td>${grandBCostPct}</td>
+      `;
+      tbody.appendChild(totalTr);
+    }
+
+    function renderCanteenTable(data) {
+      const canteenBody = document.getElementById('canteenTableBody');
+      canteenBody.innerHTML = '';
+      const c = data.canteen || {};
+      const cCover = c.cover || 0;
+      const cNetCost = c.netCost || 0;
+      const cPerDay = c.costPerDay || 0;
+      const cPerMeal = c.costPerMeal || 0;
+      const totalBudget = cCover * 60;
+
+      const canteenTr = document.createElement('tr');
+      canteenTr.innerHTML = `
+        <td>Canteen (Staff)</td>
+        <td>${cCover.toLocaleString()} Persons</td>
+        <td>${formatCurrency(cNetCost)}</td>
+        <td>${formatCurrency(cPerDay)}</td>
+        <td>${formatCurrency(cPerMeal)}</td>
+        <td>${formatCurrency(totalBudget)}</td>
+      `;
+      canteenBody.appendChild(canteenTr);
+    }
+
+    function renderCharts(data) {
+      Chart.defaults.color = '#7c6d63';
+      Chart.defaults.borderColor = '#ebdccb';
+
+      const outletCtx = document.getElementById('outletBarChart').getContext('2d');
+      if (outletBarChartInstance) outletBarChartInstance.destroy();
+
+      const costPercentages = data.byOutlet.revenues.map((rev, i) => {
+        const netCost = data.byOutlet.netCosts ? data.byOutlet.netCosts[i] : (data.byOutlet.costs[i] || 0);
+        return rev > 0 ? Number(((netCost / rev) * 100).toFixed(1)) : 0;
+      });
+
+      const outletLineLabelPlugin = {
+        id: 'outletLineLabelPlugin',
+        afterDatasetsDraw(chart) {
+          const { ctx } = chart;
+          chart.data.datasets.forEach((dataset, datasetIndex) => {
+            if (datasetIndex === 2) {
+              const meta = chart.getDatasetMeta(datasetIndex);
+              if (!meta.hidden) {
+                meta.data.forEach((element, index) => {
+                  const value = dataset.data[index];
+                  if (value > 0) {
+                    ctx.save();
+                    ctx.fillStyle = '#000000';
+                    ctx.font = 'normal 10px Prompt, sans-serif';
+                    ctx.textAlign = 'left';
+                    ctx.textBaseline = 'middle';
+
+                    const position = element.tooltipPosition();
+                    ctx.translate(position.x, position.y - 10);
+                    ctx.rotate(-Math.PI / 4);
+                    ctx.fillText(value + '%', 0, 0);
+                    ctx.restore();
+                  }
+                });
+              }
+            }
+          });
+        }
+      };
+
+      outletBarChartInstance = new Chart(outletCtx, {
+        type: 'bar',
+        data: {
+          labels: data.byOutlet.labels,
+          datasets: [
+            { label: 'Revenue', data: data.byOutlet.revenues, backgroundColor: '#c5a059', borderRadius: 3, order: 2 },
+            { label: 'Cost', data: data.byOutlet.netCosts || data.byOutlet.costs, backgroundColor: '#e07a5f', borderRadius: 3, order: 2 },
+            { label: 'Cost %', data: costPercentages, type: 'line', borderColor: '#1e293b', backgroundColor: '#1e293b', borderWidth: 2, pointRadius: 4, pointHoverRadius: 6, yAxisID: 'y-cost-pct', order: 1 }
+          ]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            tooltip: { 
+              callbacks: { 
+                label: (ctx) => ctx.dataset.type === 'line' ? `Cost %: ${ctx.raw}%` : `${ctx.dataset.label}: ${formatCurrency(ctx.raw)}` 
+              } 
+            }
+          },
+          scales: {
+            y: { type: 'linear', display: true, position: 'left', ticks: { callback: (val) => '฿' + Number(val).toLocaleString() }, grid: { color: '#f3e8dc' } },
+            'y-cost-pct': { type: 'linear', display: true, position: 'right', min: 0, max: 100, ticks: { callback: (val) => val + '%' }, grid: { drawOnChartArea: false } },
+            x: { grid: { display: false } }
+          }
+        },
+        plugins: [outletLineLabelPlugin]
+      });
+
+      const doughnutLabelPlugin = {
+        id: 'doughnutLabelPlugin',
+        afterDatasetsDraw(chart) {
+          const { ctx } = chart;
+          chart.data.datasets.forEach((dataset, datasetIndex) => {
+            const meta = chart.getDatasetMeta(datasetIndex);
+            if (!meta.hidden) {
+              const total = dataset.data.reduce((acc, val) => acc + val, 0);
+              meta.data.forEach((element, index) => {
+                const value = dataset.data[index];
+                if (total > 0 && value > 0) {
+                  const percentage = ((value / total) * 100).toFixed(1) + '%';
+                  const position = element.tooltipPosition();
+                  ctx.fillStyle = '#000000';
+                  ctx.font = 'bold 11px Prompt, sans-serif';
+                  ctx.textAlign = 'center';
+                  ctx.textBaseline = 'middle';
+                  ctx.fillText(percentage, position.x, position.y);
+                }
+              });
+            }
+          });
+        }
+      };
+
+      const catCtx = document.getElementById('categoryDonutChart').getContext('2d');
+      if (categoryDonutChartInstance) categoryDonutChartInstance.destroy();
+
+      categoryDonutChartInstance = new Chart(catCtx, {
+        type: 'doughnut',
+        data: {
+          labels: data.byCategory.labels,
+          datasets: [{ data: data.byCategory.revenues, backgroundColor: ['#c5a059', '#38bdf8', '#c084fc', '#d97706'], borderWidth: 2 }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { position: 'bottom', labels: { color: '#3d312a' } },
+            tooltip: { callbacks: { label: (ctx) => `${ctx.label}: ${formatCurrency(ctx.raw)}` } }
+          }
+        },
+        plugins: [doughnutLabelPlugin]
+      });
+
+      const trendCtx = document.getElementById('trendLineChart').getContext('2d');
+      if (trendLineChartInstance) trendLineChartInstance.destroy();
+
+      const totalAdjNet = (data.kpi.totalPurchase || 0) + (data.kpi.totalIssue || 0) + (data.kpi.totalTransferIn || 0) - (data.kpi.totalTransferOut || 0) - (data.kpi.totalCrCost || 0);
+      const rawTotalCostSum = data.dailyTrend.costs.reduce((acc, val) => acc + val, 0) || 1;
+
+      const trendCostPercentages = data.dailyTrend.revenues.map((rev, i) => {
+        const rawCost = data.dailyTrend.costs[i] || 0;
+        const netCost = rawCost + (totalAdjNet * (rawCost / rawTotalCostSum));
+        return rev > 0 ? Number(((netCost / rev) * 100).toFixed(1)) : 0;
+      });
+
+      const trendLabelPlugin = {
+        id: 'trendLabelPlugin',
+        afterDatasetsDraw(chart) {
+          const { ctx } = chart;
+          chart.data.datasets.forEach((dataset, datasetIndex) => {
+            if (datasetIndex === 2) {
+              const meta = chart.getDatasetMeta(datasetIndex);
+              if (!meta.hidden) {
+                meta.data.forEach((element, index) => {
+                  const value = dataset.data[index];
+                  if (value > 0) {
+                    ctx.save();
+                    ctx.fillStyle = '#000000';
+                    ctx.font = 'normal 10px Prompt, sans-serif';
+                    ctx.textAlign = 'left';
+                    ctx.textBaseline = 'middle';
+                    const position = element.tooltipPosition();
+                    ctx.translate(position.x, position.y - 10);
+                    ctx.rotate(-Math.PI / 4);
+                    ctx.fillText(value + '%', 0, 0);
+                    ctx.restore();
+                  }
+                });
+              }
+            }
+          });
+        }
+      };
+
+      trendLineChartInstance = new Chart(trendCtx, {
+        type: 'line',
+        data: {
+          labels: data.dailyTrend.dates,
+          datasets: [
+            { label: 'Revenue', data: data.dailyTrend.revenues, borderColor: '#b8860b', backgroundColor: 'rgba(205, 168, 81, 0.12)', fill: true, tension: 0.25, order: 2 },
+            { label: 'Cost', data: data.dailyTrend.costs, borderColor: '#c53030', backgroundColor: 'transparent', borderDash: [4, 4], tension: 0.25, order: 2 },
+            { label: 'Cost %', data: trendCostPercentages, type: 'line', borderColor: '#1e293b', backgroundColor: '#1e293b', borderWidth: 2, pointRadius: 4, pointHoverRadius: 6, yAxisID: 'y-trend-pct', tension: 0.25, order: 1 }
+          ]
+        },
+        options: {
+          responsive: true,
+          interaction: { mode: 'index', intersect: false },
+          plugins: {
+            tooltip: { 
+              callbacks: { 
+                label: (ctx) => ctx.dataset.label === 'Cost %' ? `Cost %: ${ctx.raw}%` : `${ctx.dataset.label}: ${formatCurrency(ctx.raw)}` 
+              } 
+            }
+          },
+          scales: {
+            y: { type: 'linear', display: true, position: 'left', ticks: { callback: (val) => '฿' + Number(val).toLocaleString() }, grid: { color: '#f3e8dc' } },
+            'y-trend-pct': { type: 'linear', display: true, position: 'right', min: 0, max: 100, ticks: { callback: (val) => val + '%' }, grid: { drawOnChartArea: false } },
+            x: { grid: { color: '#f3e8dc' } }
+          }
+        },
+        plugins: [trendLabelPlugin]
+      });
+    }
+
+    async function refreshExcelData() {
+      try {
+        const response = await fetch('/api/refresh-excel', { method: 'POST' });
+        const result = await response.json();
+        alert(result.message);
+        if (result.success) {
+          loadDashboardData();
+        }
+      } catch (err) {
+        alert('Server connection failed.');
+      }
+    }
+
+    document.getElementById('revDate').addEventListener('change', fetchRecordForEditing);
+    document.getElementById('outlet').addEventListener('change', fetchRecordForEditing);
+
+    async function fetchRecordForEditing() {
+      const date = document.getElementById('revDate').value;
+      const outlet = document.getElementById('outlet').value;
+
+      if (!date || !outlet) return;
+
+      try {
+        const response = await fetch('/api/get-record-by-date', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ date, outlet })
+        });
+        const result = await response.json();
+
+        document.getElementById('outletPurchase').value = '';
+        document.getElementById('outletIssue').value = '';
+        document.getElementById('outletTransferIn').value = '';
+        document.getElementById('outletTransferOut').value = '';
+        document.getElementById('outletCrCost').value = '';
+        document.getElementById('roomAvailable').value = '0';
+        document.getElementById('roomSold').value = '0';
+        document.getElementById('comHuRoom').value = '0';
+        document.getElementById('totalGuest').value = '0';
+        document.getElementById('canteenCover').value = '';
+        document.getElementById('canteenTotalCost').value = '';
+        document.getElementById('canteenBudgetDisplay').textContent = '฿0.00';
+        document.getElementById('canteenDiffDisplay').textContent = '฿0.00';
+
+        document.querySelectorAll('input[name="category"]').forEach(cb => cb.checked = false);
+        document.querySelectorAll('.table-row .nav-input').forEach(input => input.value = '');
+
+        if (!result.success || !result.data) return;
+
+        const d = result.data;
+
+        if (d.purchase) document.getElementById('outletPurchase').value = d.purchase;
+        if (d.issue) document.getElementById('outletIssue').value = d.issue;
+        if (d.transferIn) document.getElementById('outletTransferIn').value = d.transferIn;
+        if (d.transferOut) document.getElementById('outletTransferOut').value = d.transferOut;
+        if (d.crCost) document.getElementById('outletCrCost').value = d.crCost;
+        if (d.weather) document.getElementById('weather').value = d.weather;
+
+        document.getElementById('roomAvailable').value = d.roomAvailable || 0;
+        document.getElementById('roomSold').value = d.roomSold || 0;
+        document.getElementById('comHuRoom').value = d.comHuRoom || 0;
+        document.getElementById('totalGuest').value = d.totalGuest || 0;
+
+        if (outlet === 'Canteen') {
+          if (d.records && d.records.length > 0) {
+            document.getElementById('canteenCover').value = d.records[0].cover || 0;
+            document.getElementById('canteenTotalCost').value = d.records[0].cost || 0;
+            calculateCanteenBudget();
+          }
+        } else {
+          d.records.forEach(r => {
+            const mealGroup = document.querySelector(`.meal-group[data-meal="${r.meal}"]`);
+            if (mealGroup) {
+              const catTypeKey = Object.keys(rvCategoryMap).find(k => rvCategoryMap[k] === r.category);
+              if (catTypeKey) {
+                const row = mealGroup.querySelector(`.table-row[data-type="${catTypeKey}"]`);
+                if (row) {
+                  if (r.revenue !== undefined && !isNaN(r.revenue)) row.querySelector('.inp-rev').value = r.revenue;
+                  if (r.cover !== undefined && !isNaN(r.cover)) row.querySelector('.inp-cover').value = r.cover;
+                  if (r.cost !== undefined && !isNaN(r.cost)) row.querySelector('.inp-cost').value = r.cost;
+                }
+              }
+            }
+          });
+
+          d.records.forEach(r => {
+            if ((r.revenue && r.revenue > 0) || (r.cover && r.cover > 0) || (r.cost && r.cost > 0)) {
+              const cb = document.querySelector(`input[name="category"][value="${r.category}"]`);
+              if (cb) cb.checked = true;
+            }
+          });
+        }
+      } catch (err) {
+        console.error('Failed to fetch record for editing:', err);
+      }
+    }
+  </script>
+</body>
+</html>
